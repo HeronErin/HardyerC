@@ -1,8 +1,8 @@
 CC      = gcc
-CFLAGS  = -g
+CFLAGS  = -g -I "$(shell pwd)"
 RM      = rm -f
 
-C_FILES   = $(wildcard src/*.c)
+C_FILES   = $(wildcard */*.c)
 O_FILES= $(C_FILES:.c=.o)
 
 
@@ -11,18 +11,17 @@ default: hcc
 objs: $(O_FILES)
 
 hcc: objs
-	gcc -o hcc $(O_FILES)
+	$(CC) $(CFLAGS) -o hcc $(O_FILES)
 
-
-
-src/%.o : src/%.c
+*/%.o : */%.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 run: hcc
 	./hcc
 
-debug_run: run clean
+debug_run: run light_clean
 
-clean:
-	rm ./hcc src/*.o
-
+clean: light_clean
+	rm */*.o | true
+light_clean:
+	rm ./hcc | true
