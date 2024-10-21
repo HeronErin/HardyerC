@@ -60,5 +60,15 @@ int main() {
     test_array_push();
     test_array_pop();
     test_array_push_from_other();
+
+
+    Array x = array_new();
+    uint32_t xx = 2;
+    array_push(&x, xx);
+    array_push_ptr(&x, calloc(1, 1024), 1024);
+    assert(x.size == 1028);
+    assert(0 == array_pop_item(&x, uint32_t));
+    assert(x.size == 1024);
+    
     return 0;
 }
