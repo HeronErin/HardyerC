@@ -2,7 +2,7 @@ CC      = gcc
 CFLAGS  = -g -I "$(shell pwd)"
 RM      = rm -f
 
-C_FILES     = $(wildcard */*.c)
+C_FILES     = $(wildcard parser/*.c)
 O_FILES     = $(C_FILES:.c=.o)
 
 TEST_C_FILES = $(wildcard _tests/*/*.c)
@@ -12,14 +12,14 @@ default: hcc
 
 objs: $(O_FILES)
 
-hcc: objs
-	$(CC) $(CFLAGS) -o hcc $(O_FILES)
+hcc: objs interface/*.o
+	$(CC) $(CFLAGS) -o hcc $(O_FILES) interface/*.o
 
 %.o : %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-_tests/%.out : _tests/%.c
-	$(CC) $(CFLAGS) -o $@ $<
+_tests/%.out : _tests/%.c objs
+	$(CC) $(CFLAGS) -o $@ $< $(O_FILES)
 
 tests: $(TEST_EXE)
 	@for test in $(TEST_EXE); do \

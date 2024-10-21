@@ -6,7 +6,7 @@
 
 #define array_new_with_capacity(TYPE, AMOUNT) _array_new_with_capacity(sizeof(TYPE) * (AMOUNT))
 #define array_push(ARRAY, ITEM) array_push_ptr((ARRAY), ((void*)&(ITEM)), sizeof(ITEM))
-#define array_is_empty(ARRAY) ((ARRAY).ptr == NULL && (ARRAY).size == 0)
+#define array_is_empty(ARRAY) ((ARRAY)->ptr == NULL || (ARRAY)->size == 0)
 #define array_last_item_ptr(ARRAY, TYPE) (TYPE*)_array_last_item_ptr((ARRAY), sizeof(TYPE))
 #define array_last_item(ARRAY, TYPE) *array_last_item_ptr((ARRAY), TYPE)
 
@@ -54,13 +54,13 @@ static inline void array_push_ptr(Array* array, void* item, size_t size) {
 }
 static inline void array_free(Array* array){ free(array->ptr); }
 static inline void array_push_from_other(Array* array, Array* other){
-    if (array_is_empty(*other)) return;
+    if (array_is_empty(other)) return;
     array_push_ptr(array, other->ptr, other->size);
 }
 
 
 static inline void* _array_last_item_ptr(Array* array, size_t size) {
-    if (array_is_empty(*array)) return NULL;
+    if (array_is_empty(array)) return NULL;
     return (uint8_t*) array->ptr + array->size - size;
 }
 
