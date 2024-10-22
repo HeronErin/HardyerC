@@ -1,3 +1,15 @@
+// 
+//    Quick and efficient header only dynamic array implementation:
+//
+//      Either create an array with array_new() OR array_new_with_capacity(type, amount)
+// 
+//      Add to array with array_push(array, item_to_add) or array_push_ptr(array, ptr_to_data, size_of_data_in_bytes)
+//      Etc, not that complicated
+// 
+
+
+
+
 #pragma once
 #include "defs.h"
 #include <string.h>
@@ -6,7 +18,7 @@
 #include <stdint.h>
 
 #define array_new_with_capacity(TYPE, AMOUNT) _array_new_with_capacity(sizeof(TYPE) * (AMOUNT))
-#define array_push(ARRAY, ITEM) array_push_ptr((ARRAY), ((void*)&(ITEM)), sizeof(ITEM))
+#define array_push(ARRAY, ITEM) array_push_ptr((ARRAY), ((void*)&((ITEM))), sizeof((ITEM)))
 #define array_is_empty(ARRAY) ((ARRAY)->ptr == NULL || (ARRAY)->size == 0)
 #define array_last_item_ptr(ARRAY, TYPE) (TYPE*)_array_last_item_ptr((ARRAY), sizeof(TYPE))
 #define array_last_item(ARRAY, TYPE) *array_last_item_ptr((ARRAY), TYPE)
@@ -22,12 +34,11 @@ typedef struct {
 } Array;
 
 static inline Array array_new() {
-    Array ret = {
+    return (Array){
         NULL,
         0,
         0
     };
-    return ret;
 }
 
 static inline Array _array_new_with_capacity(size_t capacity) {
@@ -40,13 +51,9 @@ static inline Array _array_new_with_capacity(size_t capacity) {
     return ret;
 }
 
-// O(M) where M is size
-static inline void array_push_ptr(Array* array, void* item, size_t size) {
-    size_t new_size = array->size + size;
-    
-
+static inline void array_grow_for(Array* array, size_t size){
     // EXPONENTIAL GROWTH!
-    if (array->size < new_size){
+    if (array->size < size){
         size_t grown_cap = (array->capacity + 1) << 1;
         array->capacity = grown_cap > size ? grown_cap : size;
         debug_assert(array->capacity != 0);
@@ -54,12 +61,20 @@ static inline void array_push_ptr(Array* array, void* item, size_t size) {
         array->ptr = realloc(array->ptr, array->capacity);
         debug_assert(array->ptr != NULL);
     }
+}
+
+// O(M) where M is size
+static inline void array_push_ptr(Array* array, const void* restrict item, size_t size) {
+    size_t new_size = array->size + size;
+
+    array_grow_for(array, new_size);
 
     memcpy((uint8_t*) array->ptr + array->size, item, size);
+    
     array->size = new_size;
 }
 static inline void array_free(Array* array){ if (array->ptr) free(array->ptr); }
-static inline void array_push_from_other(Array* array, Array* other){
+static inline void array_push_from_other(Array* restrict array, Array* restrict other){
     debug_assert(other);
     
     if (array_is_empty(other)) return;
