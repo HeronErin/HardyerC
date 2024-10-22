@@ -6,8 +6,8 @@ size_t ps_to_modified_index(const PatchString* restrict ps, size_t index_){
     ptrdiff_t index = index_;
     const Array* patches = &ps->patches;
 
-    struct _Patch* patch = patches->ptr;
-    struct _Patch* patchEnd = patches->ptr + patches->size;
+    const struct _Patch* patch = patches->ptr;
+    const struct _Patch* patchEnd = patches->ptr + patches->size;
     
     for (; patch <= patchEnd; patch++){
         if (index < patch->start);
@@ -18,6 +18,22 @@ size_t ps_to_modified_index(const PatchString* restrict ps, size_t index_){
     
     return index;
 }
+size_t ps_to_original_index(const PatchString* restrict ps, size_t index_){
+    ptrdiff_t index = index_;
+    const Array* patches = &ps->patches;
+    const struct _Patch* patch = patches->ptr;
+    const struct _Patch* patchEnd = patches->ptr + patches->size;
+
+    for (; patchEnd >= patch; patchEnd--){
+        if (index < patchEnd->start);
+        else if (patchEnd->len_mod > 0 && index < patchEnd->start + patchEnd->len_mod)
+            index = patchEnd->start -1;
+        else if (index >= patchEnd->start)
+            index -= patchEnd->len_mod;
+    }
+    return index;
+}
+
 
 bool ps_insert_at(PatchString* ps, size_t point, char* str_to_insert){
     debug_assert(str_to_insert != NULL);
@@ -77,7 +93,6 @@ PatchString _ps_windowed_construction(
         const WindowPredicate predicate){
     predicate(NULL);
     
-    // Make sure C knows we will not try to dereference
     size_t old_source = (size_t) source;
 
     PatchString new = {

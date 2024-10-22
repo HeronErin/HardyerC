@@ -23,8 +23,8 @@ int main(){
 
     const char* mod = ps_clone_str(&ps);
     
-    for (const char* y = x; *y; ++y){
-        printf("%c - %c \n",  mod[ps_to_modified_index(&ps, (size_t)(y-x))], *y);
+    for (const char* y = mod; *y; ++y){
+        printf("%c - %c \n",  *y, x[ps_to_original_index(&ps, (size_t)(y-mod))]);
     }
 
 
