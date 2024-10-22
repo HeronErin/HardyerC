@@ -99,12 +99,17 @@ size_t ps_to_modified_index(const PatchString* restrict ps, size_t index);
 
 
 typedef enum{
-    // Only advance
+    // Uses: nothing
     CR_KEEP = 0,
     
-
+    // Uses: amount
     CR_DISCARD,
-    CR_DISCARD_AND_INSERT
+    // Uses: amount, insertion
+    CR_DISCARD_AND_INSERT,
+
+    // Insert then free the string
+    // Uses: amount, insertion
+    CR_DISCARD_AND_INSERT_OWNED
 } ConstructionResultVariety;
 
 typedef struct{

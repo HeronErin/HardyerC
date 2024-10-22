@@ -116,17 +116,7 @@ PatchString _ps_windowed_construction(
                 source++;
                 pseudo_index++;
                 break;
-            case CR_DISCARD:
-                DISCARD:
-                if (cr.amount == 0) goto KEEP;
-                array_push(&new.patches, ((struct _Patch){
-                    pseudo_index,
-                    pseudo_index + cr.amount,
-                    -cr.amount
-                }));
-                source += cr.amount;
-                if ((size_t) source > old_source + source_len) return new;
-                break;
+            case CR_DISCARD_AND_INSERT_OWNED:
             case CR_DISCARD_AND_INSERT:
                 debug_assert(cr.insertion);
 
@@ -139,10 +129,19 @@ PatchString _ps_windowed_construction(
                     size
                 }));
                 pseudo_index += size;
+                if ( CR_DISCARD_AND_INSERT_OWNED == cr.variety ) free((void*) cr.insertion);
 
-                goto DISCARD;
-
-
+                // Continue to handle discard
+            case CR_DISCARD:
+                if (cr.amount == 0) goto KEEP;
+                array_push(&new.patches, ((struct _Patch){
+                    pseudo_index,
+                    pseudo_index + cr.amount,
+                    -cr.amount
+                }));
+                source += cr.amount;
+                if ((size_t) source > old_source + source_len) return new;
+                break;
                 
             default:
         }
