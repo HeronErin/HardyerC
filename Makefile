@@ -1,5 +1,6 @@
 CC      = gcc
-CFLAGS  = -g -I "$(shell pwd)"
+CFLAGS  = -I "$(shell pwd)"
+DEBUG_FLAGS = -DDEBUG -g
 RM      = rm -f
 
 C_FILES     = $(wildcard parser/*.c)
@@ -8,12 +9,15 @@ O_FILES     = $(C_FILES:.c=.o)
 TEST_C_FILES = $(wildcard _tests/*/*.c)
 TEST_EXE    = $(TEST_C_FILES:.c=.out)
 
+INTERFACE_C_FILES = $(wildcard interface/*.c)
+INTERFACE_O_FILES = $(INTERFACE_C_FILES:.c=.o)
+
 default: hcc
 
 objs: $(O_FILES)
 
-hcc: objs interface/*.o
-	$(CC) $(CFLAGS) -o hcc $(O_FILES) interface/*.o
+hcc: objs $(INTERFACE_O_FILES)
+	$(CC) $(CFLAGS) -o hcc $(O_FILES) $(INTERFACE_O_FILES)
 
 %.o : %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
@@ -21,6 +25,7 @@ hcc: objs interface/*.o
 _tests/%.out : _tests/%.c objs
 	$(CC) $(CFLAGS) -o $@ $< $(O_FILES)
 
+tests: CFLAGS += $(DEBUG_FLAGS)
 tests: $(TEST_EXE)
 	@for test in $(TEST_EXE); do \
 		echo "Running $$test"; \
@@ -30,6 +35,8 @@ tests: $(TEST_EXE)
 run: hcc
 	./hcc
 
+
+debug_run: CFLAGS += $(DEBUG_FLAGS)
 debug_run: run light_clean
 
 clean: light_clean

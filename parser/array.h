@@ -1,4 +1,5 @@
 #pragma once
+#include "defs.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -35,6 +36,7 @@ static inline Array _array_new_with_capacity(size_t capacity) {
         0,
         capacity
     };
+    debug_assert(ret.ptr != 0);
     return ret;
 }
 
@@ -43,17 +45,23 @@ static inline void array_push_ptr(Array* array, void* item, size_t size) {
     
 
     // EXPONENTIAL GROWTH!
-    size_t grown_cap = (array->capacity + 1) << 1;
-    array->capacity = grown_cap > size ? grown_cap : size;
+    if (array->size < new_size){
+        size_t grown_cap = (array->capacity + 1) << 1;
+        array->capacity = grown_cap > size ? grown_cap : size;
+        debug_assert(array->capacity != 0);
+    }
 
 
     array->ptr = realloc(array->ptr, array->capacity);
+    debug_assert(array->ptr != NULL);
 
     memcpy((uint8_t*) array->ptr + array->size, item, size);
     array->size = new_size;
 }
-static inline void array_free(Array* array){ free(array->ptr); }
+static inline void array_free(Array* array){ if (array->ptr) free(array->ptr); }
 static inline void array_push_from_other(Array* array, Array* other){
+    debug_assert(other);
+    
     if (array_is_empty(other)) return;
     array_push_ptr(array, other->ptr, other->size);
 }

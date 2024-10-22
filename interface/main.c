@@ -1,15 +1,16 @@
 #include <stdio.h>
-#include "parser/array.h"
+#include "parser/patch_resolver.h"
 
 int main(){
-    Array x = array_new();
-    int xx = 2;
-    array_push(&x, xx);
-    array_push_ptr(&x, calloc(1, 1024), 1024);
-    
+    PatchString ps = ps_from("Hello");
+    printf("%s\n", ps_clone_str(&ps));
+    ps_insert_at_end(&ps, " World!");
+    printf("%s\n", ps_clone_str(&ps));
 
-    printf("Test %i\n", array_pop_item(&x, int));
 
-    printf("Test %i\n", array_pop_item(&x, int));
+    ps_insert_at(&ps, 20000, "");
+
+
+    ps_free(&ps);
     
 }
