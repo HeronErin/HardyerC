@@ -40,6 +40,7 @@ static inline Array _array_new_with_capacity(size_t capacity) {
     return ret;
 }
 
+// O(M) where M is size
 static inline void array_push_ptr(Array* array, void* item, size_t size) {
     size_t new_size = array->size + size;
     
@@ -49,11 +50,10 @@ static inline void array_push_ptr(Array* array, void* item, size_t size) {
         size_t grown_cap = (array->capacity + 1) << 1;
         array->capacity = grown_cap > size ? grown_cap : size;
         debug_assert(array->capacity != 0);
+
+        array->ptr = realloc(array->ptr, array->capacity);
+        debug_assert(array->ptr != NULL);
     }
-
-
-    array->ptr = realloc(array->ptr, array->capacity);
-    debug_assert(array->ptr != NULL);
 
     memcpy((uint8_t*) array->ptr + array->size, item, size);
     array->size = new_size;
