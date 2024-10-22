@@ -103,13 +103,13 @@ typedef enum{
     CR_KEEP = 0,
     
 
-    CR_DISCARD
+    CR_DISCARD,
+    CR_DISCARD_AND_INSERT
 } ConstructionResultVariety;
 
 typedef struct{
     ConstructionResultVariety variety;
 
-    size_t point; // Not used in deletions
     const char* insertion; // Null for deletions
     size_t amount; // Amount of space to delete (not used in insertions)
     

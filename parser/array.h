@@ -66,7 +66,6 @@ static inline void array_grow_for(Array* array, size_t size){
 // O(M) where M is size
 static inline void array_push_ptr(Array* array, const void* restrict item, size_t size) {
     size_t new_size = array->size + size;
-
     array_grow_for(array, new_size);
 
     memcpy((uint8_t*) array->ptr + array->size, item, size);

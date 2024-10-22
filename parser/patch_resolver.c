@@ -16,7 +16,7 @@ size_t ps_to_modified_index(const PatchString* restrict ps, size_t index_){
             index = patch->start;
     }
     
-    return index;
+    return index > 0 ? index : 0;
 }
 size_t ps_to_original_index(const PatchString* restrict ps, size_t index_){
     ptrdiff_t index = index_;
@@ -31,7 +31,7 @@ size_t ps_to_original_index(const PatchString* restrict ps, size_t index_){
         else if (index >= patchEnd->start)
             index -= patchEnd->len_mod;
     }
-    return index;
+    return index > 0 ? index : 0;
 }
 
 
@@ -117,6 +117,7 @@ PatchString _ps_windowed_construction(
                 pseudo_index++;
                 break;
             case CR_DISCARD:
+                DISCARD:
                 if (cr.amount == 0) goto KEEP;
                 array_push(&new.patches, ((struct _Patch){
                     pseudo_index,
@@ -126,7 +127,21 @@ PatchString _ps_windowed_construction(
                 source += cr.amount;
                 if ((size_t) source > old_source + source_len) return new;
                 break;
-            
+            case CR_DISCARD_AND_INSERT:
+                debug_assert(cr.insertion);
+
+                const int size = strlen(cr.insertion);
+
+                array_push_ptr(&new.internal_string, cr.insertion, size);
+                array_push(&new.patches, ((struct _Patch){
+                    pseudo_index,
+                    pseudo_index,
+                    size
+                }));
+                pseudo_index += size;
+
+                goto DISCARD;
+
 
                 
             default:
