@@ -5,12 +5,12 @@
 
 int main(){
 
-    char* x = "??=define foo??=??=bar";
+    char* x = ":\\\n??=\\\na\\\nf";
     
-    PatchString ps = compute_trigraphs(x);
+    PatchString ps = initial_translation_phases(x);
     char* mod = ps_clone_str(&ps);
 
-    printf("\"%s\":\n", mod);
+    printf("%i: \"%s\":\n", ps.internal_string.size, mod);
     
     for (const char* y = mod; *y; y++){
         printf("%c - %c \n",  *y, x[ps_to_original_index(&ps, (size_t)(y-mod))]);

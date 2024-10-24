@@ -52,7 +52,7 @@ static inline char* ps_clone_str(PatchString* ps){
     memcpy(str, ps->internal_string.ptr, size);
     
     // Add in the null
-    str[size + 1] = 0;
+    str[size] = 0;
     return str;
 }
 
