@@ -124,7 +124,7 @@ PatchString _ps_windowed_construction(
         return new;
     }
     size_t pseudo_index = 0;
-    while (source + window_size < old_source + source_len){
+    while ((size_t) source + window_size < old_source + source_len){
         ConstructionResult cr = predicate(source);
         switch (cr.variety){
             case CR_KEEP:

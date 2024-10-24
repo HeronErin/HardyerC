@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "parser/patch_resolver.h"
-#include "parser/translation.h"
+#include "parser/initial_translation.h"
 
 
 int main(){

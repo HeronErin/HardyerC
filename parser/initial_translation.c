@@ -1,4 +1,4 @@
-#include "translation.h"
+#include "initial_translation.h"
 
 // Must have a window size of 3!
 // Replaces trigraphs into their corresponding meanings
