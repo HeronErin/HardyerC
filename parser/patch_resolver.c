@@ -84,12 +84,29 @@ bool ps_delete(PatchString* restrict ps, size_t point, size_t amount){
     return 1;
 }
 
+void ps_reconstruct_using(PatchString* ps, uint8_t window_size, const WindowPredicate predicate){
+    PatchString new_patch_str = _ps_windowed_construction(
+        ps->internal_string.ptr,
+        ps->internal_string.size,
+        window_size,
+        predicate
+    );
+
+    array_push_from_other(&ps->patches, &new_patch_str.patches);
+    array_free(&new_patch_str.patches);
+    array_free(&ps->internal_string);
+
+    ps->internal_string = new_patch_str.internal_string;
+}
+
+
+
 
 
 PatchString _ps_windowed_construction(
         const char* restrict source, 
         const size_t source_len, 
-        const int8_t window_size, 
+        const uint8_t window_size, 
         const WindowPredicate predicate){
     predicate(NULL);
     

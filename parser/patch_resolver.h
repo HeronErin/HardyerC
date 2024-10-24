@@ -136,8 +136,20 @@ typedef ConstructionResult (*WindowPredicate)(const char* restrict );
 PatchString _ps_windowed_construction(
         const char* restrict source, 
         size_t source_len, 
-        int8_t window_size, 
+        uint8_t window_size, 
         const WindowPredicate predicate);
+
+
+void ps_reconstruct_using(PatchString* ps, uint8_t window_size, const WindowPredicate predicate);
+
+static inline PatchString ps_construct_from(const char* source, uint8_t window_size, const WindowPredicate predicate){
+    return _ps_windowed_construction(
+        source,
+        strlen(source),
+        window_size,
+        predicate
+    );
+}
 
 
 

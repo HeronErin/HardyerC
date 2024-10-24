@@ -27,7 +27,7 @@ ConstructionResult on_window(const char* window){
 
 int main(){
     const char* x = "Boo Far Faz!";
-    PatchString ps = _ps_windowed_construction(x, strlen(x), 3, &on_window);
+    PatchString ps = ps_construct_from(x, 3, &on_window);
     
     const char* mod = ps_clone_str(&ps);
     printf("\"%s\":\n", mod);
