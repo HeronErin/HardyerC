@@ -58,6 +58,7 @@ static inline void array_grow_for(Array* array, size_t size){
     // EXPONENTIAL GROWTH!
     size_t grown_cap = (array->capacity + 1) << 1;
     array->capacity = grown_cap > size ? grown_cap : size;
+    array->capacity = array->capacity > 1024 ? array->capacity : 1024;
     debug_assert(array->capacity != 0);
 
     array->ptr = realloc(array->ptr, array->capacity);
