@@ -106,6 +106,7 @@ typedef enum{
     CR_DISCARD,
     // Uses: amount, insertion
     CR_DISCARD_AND_INSERT,
+    CR_DISCARD_AND_INSERT_CHAR,
 
     // Insert then free the string
     // Uses: amount, insertion
@@ -117,8 +118,11 @@ typedef struct{
 
     const char* insertion; // Null for deletions
     size_t amount; // Amount of space to delete (not used in insertions)
+
+
+    char insertion_char; // Only used for CR_DISCARD_AND_INSERT_CHAR
     
-}ConstructionResult;
+} ConstructionResult;
 
 
 static const ConstructionResult CR_NOP = {0};

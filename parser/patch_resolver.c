@@ -133,6 +133,17 @@ PatchString _ps_windowed_construction(
                 source++;
                 pseudo_index++;
                 break;
+            case CR_DISCARD_AND_INSERT_CHAR:
+                debug_assert(cr.insertion_char);
+                array_push(&new.internal_string, cr.insertion_char);                
+                array_push(&new.patches, ((struct _Patch){
+                    pseudo_index,
+                    pseudo_index,
+                    1
+                }));
+                pseudo_index++;
+
+                goto DISCARD;
             case CR_DISCARD_AND_INSERT_OWNED:
             case CR_DISCARD_AND_INSERT:
                 debug_assert(cr.insertion);
@@ -150,6 +161,7 @@ PatchString _ps_windowed_construction(
 
                 // Continue to handle discard
             case CR_DISCARD:
+                DISCARD:
                 if (cr.amount == 0) goto KEEP;
                 array_push(&new.patches, ((struct _Patch){
                     pseudo_index,

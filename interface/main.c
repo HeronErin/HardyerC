@@ -1,35 +1,15 @@
 #include <stdio.h>
 #include "parser/patch_resolver.h"
+#include "parser/translation.h"
 
-
-ConstructionResult on_window(const char* window){
-    
-
-    if (window == NULL) return CR_NOP;
-
-    if (window[0] == 'F'){
-        return (ConstructionResult) {
-            CR_DISCARD_AND_INSERT,
-            "B",
-            1
-        };
-    }
-    if (window[0] == 'B'){
-        return (ConstructionResult) {
-            CR_DISCARD_AND_INSERT,
-            "F",
-            1
-        };
-    }
-
-    return CR_NOP;
-}
 
 int main(){
-    const char* x = "Boo Far Faz!";
-    PatchString ps = ps_construct_from(x, 3, &on_window);
+
+    char* x = "??=define foo??=??=bar";
     
-    const char* mod = ps_clone_str(&ps);
+    PatchString ps = compute_trigraphs(x);
+    char* mod = ps_clone_str(&ps);
+
     printf("\"%s\":\n", mod);
     
     for (const char* y = mod; *y; y++){
@@ -40,6 +20,6 @@ int main(){
         printf("%c - %c \n", *y, mod[ps_to_modified_index(&ps, (size_t)(y-x))]);
     }
 
-    // ps_free(&ps);
+    ps_free(&ps);
     
 }
