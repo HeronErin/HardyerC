@@ -155,6 +155,13 @@ static inline PatchString ps_construct_from(const char* source, uint8_t window_s
     );
 }
 
+// Gives a pointer to the internal string.
+// WARNING: ALTHOUGH THIS IS A VALID STRING, IT IS ONLY GARENTEED TO EXIST UNTIL
+//          THE NEXT OPERATION IS PREFORMED! USE ps_clone_str() FOR LONG TERM USAGE! 
+static inline char* ps_temporary_view(PatchString* ps){
+    return array_force_null_terminate(&ps->internal_string);
+}
+
 
 
 

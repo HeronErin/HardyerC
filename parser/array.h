@@ -52,15 +52,17 @@ static inline Array _array_new_with_capacity(size_t capacity) {
 }
 
 static inline void array_grow_for(Array* array, size_t size){
-    // EXPONENTIAL GROWTH!
-    if (array->size < size){
-        size_t grown_cap = (array->capacity + 1) << 1;
-        array->capacity = grown_cap > size ? grown_cap : size;
-        debug_assert(array->capacity != 0);
+    if (array->size >= size) return;
 
-        array->ptr = realloc(array->ptr, array->capacity);
-        debug_assert(array->ptr != NULL);
-    }
+
+    // EXPONENTIAL GROWTH!
+    size_t grown_cap = (array->capacity + 1) << 1;
+    array->capacity = grown_cap > size ? grown_cap : size;
+    debug_assert(array->capacity != 0);
+
+    array->ptr = realloc(array->ptr, array->capacity);
+    debug_assert(array->ptr != NULL);
+    
 }
 
 // O(M) where M is size
@@ -91,3 +93,20 @@ static inline void* _array_pop_item(Array* array, size_t size) {
     array->size -= size;
     return (uint8_t*) array->ptr + array->size;
 }
+
+
+// Puts a null after the end of an array. So if the array is of chars
+// this makes it a valid string. (Be aware ANY PUSH writes over this!)
+//
+// DO NOT STORE THE PTR FOR LONG TERM USE! CLONE THE STRING FOR THAT!
+//
+// Return: The internal ptr
+static inline char* array_force_null_terminate(Array* array){
+    // Ensure space
+    array_grow_for(array, array->size + 1);
+
+    ( (char*)array->ptr )[array->size] = 0;
+
+    return array->ptr;
+}
+
