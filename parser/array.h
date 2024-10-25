@@ -14,6 +14,7 @@
 #include "defs.h"
 #include <string.h>
 #include <stdlib.h>
+
 #include <stdio.h>
 #include <stdint.h>
 
@@ -31,13 +32,21 @@ typedef struct {
     void* ptr;
     size_t size;
     size_t capacity;
+
+    // A frozen array is one in which a realloc is PROHIBITED (meaning until freed it is safe to get a ptr to)
+    char is_frozen;
 } Array;
+
+
+static inline void array_freeze(Array* a){a->is_frozen = 1;}
+
 
 static inline Array array_new() {
     return (Array){
         NULL,
         0,
-        0
+        0,
+        0,
     };
 }
 
@@ -45,14 +54,16 @@ static inline Array _array_new_with_capacity(size_t capacity) {
     Array ret = {
         malloc(capacity),
         0,
-        capacity
+        capacity,
+        0
     };
     debug_assert(ret.ptr != 0);
     return ret;
 }
 
 static inline void array_grow_for(Array* array, size_t size){
-    if (array->size >= size) return;
+    debug_assert(!array->is_frozen);
+    if (array->capacity >= size) return;
 
 
     // EXPONENTIAL GROWTH!
@@ -66,17 +77,25 @@ static inline void array_grow_for(Array* array, size_t size){
     
 }
 
+// O(1) assuming no realloc
+// Simply increases the size of the array, and returns the ptr to the newly allocated object
+static inline void* array_push_unallocated(Array* array, const size_t size_to_add){
+    debug_assert(!array->is_frozen);
+    size_t new_size = array->size + size_to_add;
+    array_grow_for(array, new_size);
+    void* ret = (uint8_t*) array->ptr + array->size;
+    array->size = new_size;
+    return ret;
+}
+
 // O(M) where M is size
 static inline void array_push_ptr(Array* array, const void* restrict item, size_t size) {
-    size_t new_size = array->size + size;
-    array_grow_for(array, new_size);
-
-    memcpy((uint8_t*) array->ptr + array->size, item, size);
-    
-    array->size = new_size;
+    memcpy(array_push_unallocated(array, size), item, size);
 }
+
 static inline void array_free(Array* array){ if (array->ptr) free(array->ptr); }
 static inline void array_push_from_other(Array* restrict array, Array* restrict other){
+    debug_assert(!array->is_frozen);
     debug_assert(other);
     
     if (array_is_empty(other)) return;
@@ -90,6 +109,7 @@ static inline void* _array_last_item_ptr(Array* array, size_t size) {
 }
 
 static inline void* _array_pop_item(Array* array, size_t size) {
+    debug_assert(!array->is_frozen);
     if (array->size < size) return NULL;
     array->size -= size;
     return (uint8_t*) array->ptr + array->size;
@@ -110,4 +130,5 @@ static inline char* array_force_null_terminate(Array* array){
 
     return array->ptr;
 }
+
 

@@ -11,6 +11,7 @@ struct _Patch{
     ptrdiff_t len_mod;
 };
 
+
 typedef struct{
     Array internal_string; // Array type: int8_t NOT NULL TERMINATED!
     Array patches; // Array type: struct _Patch
