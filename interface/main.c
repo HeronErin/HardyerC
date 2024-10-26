@@ -1,14 +1,8 @@
 #include <stdio.h>
-#include "parser/patch_resolver.h"
-#include "parser/token.h"
-#include "parser/state.h"
+#include "common/error.h"
+
 
 
 int main(){
-
-    char* x = ":\\\n??=\\\na\\\nf";
-
-    
-    printf("%i\n", sizeof(TokenType));
-    
+    raise_context_less_error("SHIT, this ain't right!", -1);
 }

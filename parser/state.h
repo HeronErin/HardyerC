@@ -1,6 +1,7 @@
 #pragma once
-#include "array.h"
+#include "patch_resolver.h"
 #include "string.h"
+#include "common/defs.h"
 
 
 struct LoadedFile{

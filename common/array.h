@@ -11,7 +11,7 @@
 
 
 #pragma once
-#include "defs.h"
+#include "common/defs.h"
 #include <string.h>
 #include <stdlib.h>
 

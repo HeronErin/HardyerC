@@ -1,0 +1,2 @@
+CompileFlags:
+  Add: -I/home/mitchell/Documents/clang/hardyc -std=c11

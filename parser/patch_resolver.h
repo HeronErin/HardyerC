@@ -1,6 +1,6 @@
 #pragma once
-#include "defs.h"
-#include "array.h"
+#include "common/defs.h"
+#include "common/array.h"
 #include <stddef.h>
 #include <string.h>
 #include <stdbool.h>

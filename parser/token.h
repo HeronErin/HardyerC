@@ -23,6 +23,56 @@
 //         each non-white-space character that cannot be one of
 //         the above
 
+static inline bool is_punctuator_single(const char c){
+    switch (c){
+        case '[':
+        case ']':
+        case '(':
+        case ')':
+        case '{':
+        case '}':
+        case '*':
+        case ',':
+        case ':':
+        case '=':
+        case ';':
+        case '#':
+        case '\'':
+            return true;
+    }
+    return false;
+}
+
+
+static inline bool assess_potential_number(const char* input){
+    return (input[0] >= '0' && input[0] <= '9') || (input[0] == '.' && input[1] >= '0' && input[1] <= '9');
+}
+
+enum NumberBase{
+    NB_NONE,
+    NB_OCTAL,
+    NB_HEX,
+    NB_DEC
+};
+
+struct PPNumberLiteral{
+    enum NumberBase detected_base;
+
+
+    // NO MORE THAN 64k long numbers
+    uint16_t predecimal_size;
+    uint16_t postdecimal_size;
+    uint16_t postE_size;
+
+    const char* predecimal_portion;
+    const char* postdecimal_portion;
+    const char* postE_portion;
+};
+
+
+
+
+
 
 typedef enum{
     TT_UNKNOWN,
@@ -60,55 +110,6 @@ typedef struct{
 
 
     union{
-        PPNumberLiteral ppNumberLiteral;
-    }
+        struct PPNumberLiteral ppNumberLiteral;
+    };
 } Token;
-
-
-
-
-static inline bool is_punctuator_single(const char c){
-    switch (c){
-        case '[':
-        case ']':
-        case '(':
-        case ')':
-        case '{':
-        case '}':
-        case '*':
-        case ',':
-        case ':':
-        case '=':
-        case ';':
-        case '#':
-        case '\'':
-            return true;
-    }
-    return false;
-}
-
-
-static inline bool assess_potential_number(const char* restrict input){
-    return (input[0] >= '0' && input[0] <= '9') || (input[0] == '.' && input[1] >= '0' && input[1] <= '9');
-}
-
-enum NumberBase{
-    NB_NONE,
-    NB_OCTAL,
-    NB_HEX,
-    NB_DEC
-}
-
-struct PPNumberLiteral{
-    enum NumberBase detected_base,
-
-
-    // NO MORE THAN 64k long numbers
-    uint16_t predecimal_size;
-    uint16_t postdecimal_size;
-    uint16_t postE_size;
-
-    const char* predecimal_portion;
-    const char* postdecimal_portion;
-    const char* postE_portion;
-};

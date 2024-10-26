@@ -3,7 +3,7 @@ CFLAGS  = -I "$(shell pwd)"
 DEBUG_FLAGS = -DDEBUG -g
 RM      = rm -f
 
-C_FILES     = $(wildcard parser/*.c)
+C_FILES     = $(wildcard parser/*.c)  $(wildcard common/*.c)
 O_FILES     = $(C_FILES:.c=.o)
 
 TEST_C_FILES = $(wildcard _tests/*/*.c)
