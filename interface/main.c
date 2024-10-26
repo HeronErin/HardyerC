@@ -7,7 +7,7 @@
 int main(){
 
     char* x = ":\\\n??=\\\na\\\nf";
-    array
+
     
     printf("%i\n", sizeof(TokenType));
     
