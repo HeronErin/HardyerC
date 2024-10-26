@@ -5,4 +5,4 @@
 *.out
 ./hcc
 hcc
-./clangd
+./.clangd
