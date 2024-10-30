@@ -1,13 +1,23 @@
 #include "error.h"
 
-#include "ANSI-color-codes.h"
 #include <string.h>
 #include "array.h"
 
 
+const char* ce_to_str(CompilationError ce){
+    switch (ce){
+        case ERR_NUM_PERIODS: return "Invalid amount of periods in number";
+        case ERR_INVALID_NUMBER_PREFIX: return "Prefix not valid in number";
+        case ERR_NUMBER_INTERLACE: return "Invalid char found in number";
+        default: return "UNKNOW ERROR";
+    }
+}
+
+
+
 static void _add_to_in_error_mode(Array* array, const char* input, size_t len){
     if (is_terminal()){
-        array_push_ptr(array, REDHB, sizeof(REDHB));
+        array_push_ptr(array, ERROR_CODES, sizeof(ERROR_CODES));
         array_push_ptr(array, input, len);
         array_push_ptr(array, reset, sizeof(reset));
     }else{
@@ -36,7 +46,11 @@ void raise_context_less_error(const char* input, int status){
     exit(status);
 }
 
+void raise_error_with_context(TranslationParserState* tsc, uint16_t origin, uint16_t index_into_origin, const char* error_message, int status){
+    // TODO: ALL OF THIS
 
+    raise_context_less_error(error_message, status);
+}
 
 
 

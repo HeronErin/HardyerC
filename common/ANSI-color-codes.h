@@ -84,3 +84,13 @@
 #define reset "\e[0m"
 #define CRESET "\e[0m"
 #define COLOR_RESET "\e[0m"
+
+
+
+#define DIM "\e[22m"
+#define BLINK "\e[5m"
+#define HIDDEN "\e[8m"
+#define REVERSE "\e[7m"
+#define BOLD "\e[1m"
+#define UNDERLINE "\e[4m"
+#define STRIKE "\e[9m"

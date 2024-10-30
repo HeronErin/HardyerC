@@ -1,8 +1,20 @@
 #include <stdio.h>
 #include "common/error.h"
-
+#include "common/defs.h"
+#include "parser/token.h"
 
 
 int main(){
-    raise_context_less_error("SHIT, this ain't right!", -1);
+    
+    struct PPNumberLiteral lit;;
+
+
+    FalliblePtrResult fpr = parse_number(&lit, "0xDEADBEEF");
+    FPR_debug(fpr);
+    printf("\nIs Error: %x\n", fpr.is_error);
+
+    ppNumberLiteralDebug(&lit);
+    printf("\n");
+
+
 }
