@@ -19,7 +19,7 @@ size_t ps_to_modified_index(const PatchString* restrict ps, size_t index_){
     return index > 0 ? index : 0;
 }
 size_t ps_to_original_index(const PatchString* restrict ps, size_t index_){
-    ptrdiff_t index = index_;
+    ptrdiff_t index = (ptrdiff_t) index_;
     const Array* patches = &ps->patches;
     const struct _Patch* patch = patches->ptr;
     const struct _Patch* patchEnd = patches->ptr + patches->size;
@@ -35,7 +35,7 @@ size_t ps_to_original_index(const PatchString* restrict ps, size_t index_){
 }
 
 
-bool ps_insert_at(PatchString* ps, size_t point, char* str_to_insert){
+bool ps_insert_at(PatchString* ps, size_t point, const char* str_to_insert){
     debug_assert(str_to_insert != NULL);
     
     Array* istr = &ps->internal_string;
@@ -148,7 +148,7 @@ PatchString _ps_windowed_construction(
             case CR_DISCARD_AND_INSERT:
                 debug_assert(cr.insertion);
 
-                const int size = strlen(cr.insertion);
+                const size_t size = strlen(cr.insertion);
 
                 array_push_ptr(&new.internal_string, cr.insertion, size);
                 array_push(&new.patches, ((struct _Patch){

@@ -1,3 +1,4 @@
+#pragma once
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -40,6 +41,7 @@ static inline bool is_punctuator_single(const char c){
         case '#':
         case '\'':
             return true;
+        default:
     }
     return false;
 }
@@ -126,4 +128,8 @@ typedef struct{
 
 
 
-FalliblePtrResult parse_number(struct PPNumberLiteral* literal, char* restrict input);
+// Parses number, and returns an error if invalid
+FalliblePtrResult parse_number_checked(struct PPNumberLiteral* literal, char* restrict input);
+
+// Mostly unchecked number parsing
+FalliblePtrResult parse_number_unchecked(struct PPNumberLiteral* literal, char* restrict input);

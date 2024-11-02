@@ -9,7 +9,9 @@ const char* ce_to_str(CompilationError ce){
         case ERR_NUM_PERIODS: return "Invalid amount of periods in number";
         case ERR_INVALID_NUMBER_PREFIX: return "Prefix not valid in number";
         case ERR_NUMBER_INTERLACE: return "Invalid char found in number";
-        default: return "UNKNOW ERROR";
+        case ERR_UNEXPECTED_EOL: return "Unexpected end of token";
+        case ERR_NUM_BASE: return "Invalid char found in number of specifed base";
+        default: return "UNKNOWN ERROR";
     }
 }
 

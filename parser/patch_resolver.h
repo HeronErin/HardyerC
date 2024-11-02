@@ -78,7 +78,7 @@ static inline void ps_insert_at_end(PatchString* restrict ps, char* str_to_inser
 // Returns: True if successful, false otherwise
 //
 // WARNING: THIS IS SLOW
-bool ps_insert_at(PatchString* restrict ps, size_t point, char* str_to_insert);
+bool ps_insert_at(PatchString* restrict ps, size_t point,  const char* str_to_insert);
 
 // O(N) where N is remainder of internal str after point. Due to the nature of deletion
 // no realloc is used. Therefore the O(N) is guaranteed

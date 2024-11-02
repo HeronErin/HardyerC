@@ -13,6 +13,7 @@ INTERFACE_C_FILES = $(wildcard interface/*.c)
 INTERFACE_O_FILES = $(INTERFACE_C_FILES:.c=.o)
 
 default: hcc
+all: hcc
 
 objs: $(O_FILES)
 
@@ -34,6 +35,9 @@ tests: $(TEST_EXE)
 
 run: hcc
 	./hcc
+
+debug_make:  CFLAGS += $(DEBUG_FLAGS)
+debug_make: hcc
 
 
 debug_run: CFLAGS += $(DEBUG_FLAGS)
