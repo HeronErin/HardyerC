@@ -1,6 +1,6 @@
 #include <assert.h>
 #include <stdio.h>
-#include "parser/array.h"
+#include "common/array.h"
 
 void test_array_new() {
     Array arr = array_new();
