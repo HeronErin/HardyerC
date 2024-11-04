@@ -33,6 +33,7 @@ typedef enum {
     ERR_UNKNOWN,
     ERR_UNEXPECTED_EOF,
     ERR_INVALID_NUMBER_PREFIX,
+    ERR_INVALID_NUMBER_SUFFIX,
     ERR_NUMBER_INTERLACE,
     ERR_NUM_PERIODS,
     ERR_NUM_BASE,
@@ -97,7 +98,7 @@ static inline size_t FPR_make_index(FalliblePtrResult fpr, char* start_of_str){
 }
 
 
-static inline void* FPR_unwrap(FalliblePtrResult fpr, TranslationParserState* tsc, uint16_t origin){\
+static inline void* FPR_unwrap(FalliblePtrResult fpr, TranslationParserState* tsc, uint16_t origin){
     if (!fpr.is_error) return fpr.proper_result;
     
     raise_error_with_context(
@@ -112,6 +113,8 @@ static inline void* FPR_unwrap(FalliblePtrResult fpr, TranslationParserState* ts
         ce_to_str(fpr.err), 
         -1
         );
-
-
+}
+static inline void* FPR_unwrap_unchecked(FalliblePtrResult fpr) {
+    debug_assert(!fpr.is_error);
+    return fpr.proper_result;
 }

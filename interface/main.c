@@ -9,7 +9,7 @@ int main(){
     struct PPNumberLiteral lit;;
 
 
-    FalliblePtrResult fpr = parse_number_checked(&lit, "1.1.1");
+    FalliblePtrResult fpr = parse_number_checked(&lit, "1.1e1f");
     FPR_debug(fpr);
     printf("\nIs Error: %x\n", fpr.is_error);
 

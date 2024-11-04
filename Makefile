@@ -25,7 +25,6 @@ hcc: objs $(INTERFACE_O_FILES)
 
 _tests/%.out : _tests/%.c objs
 	$(CC) $(CFLAGS) -o $@ $< $(O_FILES)
-
 tests: CFLAGS += $(DEBUG_FLAGS)
 tests: $(TEST_EXE)
 	@for test in $(TEST_EXE); do \
@@ -38,7 +37,6 @@ run: hcc
 
 debug_make:  CFLAGS += $(DEBUG_FLAGS)
 debug_make: hcc
-
 
 debug_run: CFLAGS += $(DEBUG_FLAGS)
 debug_run: run light_clean
