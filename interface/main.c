@@ -1,20 +1,23 @@
 #include <stdio.h>
 #include "common/error.h"
-#include "common/defs.h"
-#include "parser/token.h"
+#include "parser/string_parsing.h"
+
 
 
 int main(){
     
-    struct PPNumberLiteral lit;;
+    struct StringLiteral lit;
 
+    char* s = "l\"hello world\"q";
 
-    FalliblePtrResult fpr = parse_number_checked(&lit, "1.1e1f");
+    enum StringLiteralVariety slv = SL_assess(s);
+    printf("%x\n", slv);
+    FalliblePtrResult fpr =  SL_parse(&lit, s, slv);
+    printf("%c\n", fpr.is_error + '0');
     FPR_debug(fpr);
-    printf("\nIs Error: %x\n", fpr.is_error);
+    printf("%s\n", lit.string_interior);
+    SL_debug(&lit);
 
-    ppNumberLiteralDebug(&lit);
-    printf("\n");
 
 
 }

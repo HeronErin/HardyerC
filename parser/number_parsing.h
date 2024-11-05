@@ -6,19 +6,19 @@ static inline bool assess_potential_number(const char* restrict input){
     return (input[0] >= '0' && input[0] <= '9') || (input[0] == '.' && input[1] >= '0' && input[1] <= '9');
 }
 
-__attribute__ ((__packed__)) enum NumberBase{
+enum NumberBase{
     NB_NONE,
     NB_OCTAL,
     NB_HEX,
     NB_BIN
-};
+} __attribute__ ((__packed__));
 
-__attribute__ ((__packed__)) enum NumberTypeSuffix {
+enum NumberTypeSuffix {
     NBT_NONE = 0, // Bit 0: is float
     NBT_FLOAT = 1,
     NBT_LONG = 2, // Bit 1: is long
     NBT_UNSIGNED = 4 // Bit 2: is unsigned
-};
+} __attribute__ ((__packed__));
 
 
 
@@ -38,13 +38,13 @@ struct PPNumberLiteral{
     const char* postE_portion;
 };
 
-void ppNumberLiteralDebug(struct PPNumberLiteral* restrict lit);
+void ppnum_debug(struct PPNumberLiteral* restrict lit);
 
 // Parses number, and returns an error if invalid
-FalliblePtrResult parse_number_checked(struct PPNumberLiteral* literal, char* restrict input);
+FalliblePtrResult ppnum_parse_checked(struct PPNumberLiteral* literal, char* restrict input);
 
 // Mostly unchecked number parsing, also ignores type suffixes
-FalliblePtrResult parse_number_unchecked(struct PPNumberLiteral* literal, char* restrict input);
+FalliblePtrResult ppnum_parse_unchecked(struct PPNumberLiteral* literal, char* restrict input);
 
 
 

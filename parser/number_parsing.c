@@ -8,7 +8,7 @@
 
 
 static FalliblePtrResult _parse_number_checked(struct PPNumberLiteral* literal, char* restrict input);
-FalliblePtrResult parse_number_checked(struct PPNumberLiteral* literal, char* restrict input) {
+FalliblePtrResult ppnum_parse_checked(struct PPNumberLiteral* literal, char* restrict input) {
     const FalliblePtrResult res = _parse_number_checked(literal, input);
     if (res.is_error) return res;
     const char trailing_lower = *(char*)res.proper_result | 0x20;
@@ -24,7 +24,7 @@ static FalliblePtrResult _parse_number_checked(struct PPNumberLiteral* literal, 
     if ( !assess_potential_number(input) )
         return FPR_err(input, 1, ERR_INVALID_NUMBER_PREFIX, NULL);
 
-    const FalliblePtrResult res = parse_number_unchecked(literal, input);
+    const FalliblePtrResult res = ppnum_parse_unchecked(literal, input);
     if (res.is_error) return res;
     char* end = res.proper_result;
 
@@ -81,7 +81,7 @@ static FalliblePtrResult _parse_number_checked(struct PPNumberLiteral* literal, 
     return FPR_ok(end+1);
 }
 
-FalliblePtrResult parse_number_unchecked(struct PPNumberLiteral* literal, char* restrict input){
+FalliblePtrResult ppnum_parse_unchecked(struct PPNumberLiteral* literal, char* restrict input){
     char curr, currLower;
 
     // Init to zero
@@ -109,9 +109,9 @@ FalliblePtrResult parse_number_unchecked(struct PPNumberLiteral* literal, char* 
     // Followed by something, non a number
     while (( curr = *(++input) ) && curr >= '0' && curr <= '9');
 
-
-
-    literal->predecimal_size = input - literal->predecimal_portion;
+    const size_t diff = input - literal->predecimal_portion;
+    debug_assert(diff <= UINT16_MAX);
+    literal->predecimal_size = diff;
 
     currLower = curr | 0x20;
 
@@ -132,7 +132,9 @@ FalliblePtrResult parse_number_unchecked(struct PPNumberLiteral* literal, char* 
         if (*input == '.') return FPR_err(input, 1, ERR_NUM_PERIODS, "Too many periods in number");
 
         while (( curr = *(++input) ) && curr >= '0' && curr <= '9');
-        literal->postdecimal_size = input - literal->postdecimal_portion;
+        const size_t postdiff = input - literal->postdecimal_portion;
+        debug_assert(postdiff <= UINT16_MAX);
+        literal->postdecimal_size = postdiff;
 
         currLower = curr | 0x20;
         if (currLower == 'e') goto E;
@@ -144,7 +146,10 @@ FalliblePtrResult parse_number_unchecked(struct PPNumberLiteral* literal, char* 
         while (// Null check          Decimal number check                Hexadecimal (Case insensitive) check
             ( curr = *(++input) ) && ( (curr >= '0' && curr <= '9')  || (  (curr | 0x20) >= 'a' && (curr | 0x20) <= 'z'  ) )
         );
-        literal->postdecimal_size = input - literal->postdecimal_portion;
+        const size_t postdiff = input - literal->postdecimal_portion;
+        debug_assert(postdiff <= UINT16_MAX);
+        literal->postdecimal_size = postdiff;
+
         return FPR_ok(input);
     }
 
@@ -162,7 +167,9 @@ FalliblePtrResult parse_number_unchecked(struct PPNumberLiteral* literal, char* 
 
     while ((curr = *(++input) ) && curr >= '0' && curr <= '9');
 
-    literal->postE_size = input - literal->postE_portion;
+    const size_t poste = input - literal->postE_portion;
+    debug_assert(poste <= UINT16_MAX);
+    literal->postE_size = poste;
 
     return FPR_ok(input);
 }
@@ -170,7 +177,7 @@ FalliblePtrResult parse_number_unchecked(struct PPNumberLiteral* literal, char* 
 
 
 
-void ppNumberLiteralDebug(struct PPNumberLiteral* restrict lit){
+void ppnum_debug(struct PPNumberLiteral* restrict lit){
     #define COPY_AND_NULL_TERMINATE(BUFFER, size, portion)       \
         char* BUFFER = (size) ? alloca((size) + 1) : "NULL";     \
         if ((size)) {                                            \
@@ -184,8 +191,8 @@ void ppNumberLiteralDebug(struct PPNumberLiteral* restrict lit){
     COPY_AND_NULL_TERMINATE(postE, lit->postE_size, lit->postE_portion);
 
     printf(
-        "<PPNumberLiteral : predecimal: %s, postdecimal: %s, postE: %s, Is float: %s, Is unsigned: %s, Is long: %s>",
-        predecimal, postdecimal, postE, TRUTHY(lit->detected_type & 1), TRUTHY (lit->detected_type & 4), TRUTHY (lit->detected_type & 2)
+        "<PPNumberLiteral : predecimal: %s, postdecimal: %s, postE: %s, Is float: %s, Is unsigned: %s, Is long: %s>\n",
+        predecimal, postdecimal, postE, TRUTHY(lit->detected_type & 1), TRUTHY(lit->detected_type & 4), TRUTHY(lit->detected_type & 2)
     );
 }
 
